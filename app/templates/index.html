@@ -1,10 +1,14 @@
 {% extends "base.html" %}
 {% block content %}
 <h1>Hi, Miriam</h1>
-{{time.strftime('Currently, it is %I:%M %p on %A, %m-%d-%Y')}}<br>
-The temperature is {{temp}}<br>
-Your air conditioner is {{ 'on' if running else 'off' }}
-<form name="input" method="post">
-<input type="submit" value="{{ 'Turn off' if running else 'Turn on' }}">
+<div>
+  <p>
+    {{time.strftime('Currently, it is %I:%M %p on %A, %m-%d-%Y')}}<br>
+    The temperature is {{temp}} degrees F<br>
+    Your air conditioner is {{ 'on' if running else 'off' }}
+  </p>
+</div>
+<form name="input" action="{{ url_for('switch_state') }}" method="post">
+<input type="submit" name="switch" value="{{ 'Turn off' if running else 'Turn on' }}">
 </form>
 {% endblock %}
