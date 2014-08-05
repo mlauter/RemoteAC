@@ -1,10 +1,18 @@
 from flask import Flask, render_template, request, redirect, url_for
+from flask.ext.socketio import SocketIO, send, emit
 import datetime
 import db
 
 app = Flask(__name__)
+#socketio = SocketIO(app)
 global requested_state
 requested_state = "do nothing"
+
+#ac_state = {
+#	'powered_on': False,
+#	'current_temperature': 73,
+#	'requested_temperature': 70
+#}
 
 from collections import namedtuple
 AcState = namedtuple('AcState', ['timestamp','temp','is_running'])
@@ -37,8 +45,12 @@ def temp_update():
 
 @app.route('/switch_state', methods=['POST'])
 def switch_state():
-	global requested_state 
-	requested_state = request.form['switch']
+	global requested_state
+	if request.form['switch'] == "1":
+		requested_state = "Turn on"
+	else:
+		requested_state = "Turn off"
+	ac_state["powered_on"] = bool(int(request.form['switch']))
 	#print requested_state
 	return render_template('switch_request.html', requested_state=requested_state)
 	#return redirect(url_for('homepage'), code=307)
