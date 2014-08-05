@@ -3,13 +3,11 @@
 <h1>Hi, Miriam</h1>
 <div>
   <p>
-    {{time.strftime('Currently, it is %I:%M %p on %A, %m-%d-%Y')}}<br>
-    The temperature is {{temp}} degrees F<br>
-    Your air conditioner is {{ 'on' if running else 'off' }}<br>
-    You have asked it to turn {{ 'on' if requested_state=="turn on" else 'off' }}
+    {% if requested_state == "do nothing" %}
+    I'm confused about your request. Try again in a minute.
+    {% else %}
+    Your air conditioner will turn {{ 'on' if requested_state=="Turn on" else 'off' }} shortly.
+    {% endif %}
   </p>
-</div>
-<form name="input" action="{{ url_for('switch_state') }}" method="post">
-<input type="submit" name="switch" value="{{ 'Turn off' if running else 'Turn on' }}">
-</form>
+<div>
 {% endblock %}

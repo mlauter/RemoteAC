@@ -39,8 +39,9 @@ def temp_update():
 def switch_state():
 	global requested_state 
 	requested_state = request.form['switch']
-	print requested_state
-	return redirect(url_for('homepage'), code=307)
+	#print requested_state
+	return render_template('switch_request.html', requested_state=requested_state)
+	#return redirect(url_for('homepage'), code=307)
 
 if __name__=="__main__":
 	app.run(debug=True)
