@@ -5,13 +5,13 @@ import db
 
 app = Flask(__name__)
 #socketio = SocketIO(app)
-global requested_state
-requested_state = "do nothing"
+global desired_state
+desired_state = 0
 
 #ac_state = {
 #	'powered_on': False,
 #	'current_temperature': 73,
-#	'requested_temperature': 70
+#	'desired_temperature': 70
 #}
 
 from collections import namedtuple
@@ -29,30 +29,32 @@ def homepage():
 def temp_update():
 	temp = float(request.form['temperature'])
 	is_running = bool(int(request.form['is_running']))
+	print temp
+	print is_running
 	db.add_ac_state(AcState(datetime.datetime.now(),temp,is_running))
-	global requested_state
-	if requested_state == "turn on":
+	global desired_state
+	if desired_state == "turn on":
 		if is_running:
-			requested_state = "do nothing"
+			desired_state = "do nothing"
 		else:
 			return "turn on"
-	elif requested_state=="turn off":
+	elif desired_state=="turn off":
 		if is_running:
 			return "turn off"
 		else:
-			requested_state = "do nothing"
+			desired_state = "do nothing"
 	return ''
 
 @app.route('/switch_state', methods=['POST'])
 def switch_state():
-	global requested_state
+	global desired_state
 	if request.form['switch'] == "1":
-		requested_state = "Turn on"
+		desired_state = "Turn on"
 	else:
-		requested_state = "Turn off"
+		desired_state = "Turn off"
 	ac_state["powered_on"] = bool(int(request.form['switch']))
-	#print requested_state
-	return render_template('switch_request.html', requested_state=requested_state)
+	#print desired_state
+	return render_template('switch_request.html', desired_state=desired_state)
 	#return redirect(url_for('homepage'), code=307)
 
 if __name__=="__main__":

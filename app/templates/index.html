@@ -10,6 +10,8 @@
 </div>
 <form name="input" action="{{ url_for('switch_state') }}" method="post">
 <input type="hidden" name="switch" value="{{ 0 if running else 1 }}">
-<input type="submit" value="{{ 'Turn off' if running else 'Turn on' }}">
+<input type="submit" value="Turn on">
+<input type="submit" value="Turn off">
 </form>
+
 {% endblock %}
