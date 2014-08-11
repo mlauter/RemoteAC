@@ -3,7 +3,7 @@
 <h1>Hi, Miriam</h1>
 <div>
   <p>
-    {{time.strftime('Currently, it is %I:%M %p on %A, %m-%d-%Y')}}<br>
+    {{time.strftime('Currently, it is %I:%M:%S %p on %A, %m-%d-%Y')}}<br>
     The temperature is {{temp}} degrees F<br>
     Your air conditioner is <span id='on_off_span'>{{ 'on' if running else 'off' }}</span>
   </p>

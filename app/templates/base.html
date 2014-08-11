@@ -7,6 +7,7 @@
     {% block content %}{% endblock %}
     <script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
     <script>
+    	// $("#time_date_span")
     	$("#on_off_switch").click(function(e) {
     		console.log('clicked')
     		$.get('/switch_state',function(data){

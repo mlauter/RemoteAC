@@ -50,23 +50,12 @@ def switch_state():
 	desired_state = not desired_state
 	print desired_state
 
-	C = threading.Condition()
-	C.acquire()
-
 	running = bool(db.get_last_ac_state()[3])
 	print running
-	#threading.Timer(.5, lambda: desired_state == runnning)
 	while desired_state != running:
-		print running+'_inside'
-		C.wait()
-	
-	C.release()
-	#time.sleep(10)
+		time.sleep(1)
+		running = bool(db.get_last_ac_state()[3])
 	print "redirecting"
-	# while True:
-	# 	if desired_state == running:
-	# 		break
-	# 	time.sleep(0.1)
 	return jsonify(running=running)
 
 @app.route('/mode', methods=['POST'])
@@ -86,4 +75,4 @@ def set_temp():
 	return redirect(url_for('homepage'))
 
 if __name__=="__main__":
-	app.run('0.0.0.0')
+	app.run('0.0.0.0',threaded=True)
