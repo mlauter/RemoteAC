@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, jsonify
 from flask.ext.socketio import SocketIO, send, emit
+import threading
 import datetime
 import time
 import db
@@ -15,14 +16,20 @@ home_mode = False
 from collections import namedtuple
 AcState = namedtuple('AcState', ['timestamp','temp','is_running'])
 
+# def waituntil(condition,timeout,period=0.25)
+# 	while True:
+# 		if condition(): return True
+# 		time.sleep(period)
+# 	return False 
+
 @app.route('/', methods = ['GET','POST'])
 @app.route('/index', methods = ['GET','POST'])
 #the homepage route, reads latest entry from database and renders index.html
 def homepage():
 	last_ac_state = db.get_last_ac_state()
 	temp = last_ac_state[2]
-	running = last_ac_state[3]
-	return render_template('index.html', temp = temp, running = bool(running), time=datetime.datetime.now())
+	running = bool(last_ac_state[3])
+	return render_template('index.html', temp = temp, running = running, time=datetime.datetime.now())
 
 @app.route('/ac_status', methods=['POST'])
 #the route for the rpi to ping with latest state info (temp and on/off)
@@ -36,14 +43,31 @@ def temp_update():
 	global home_mode
 	return jsonify(desired_state=desired_state, desired_temp=desired_temp, home_mode=home_mode)
 
-@app.route('/switch_state', methods=['POST'])
+@app.route('/switch_state', methods=['GET'])
 #the route for the UI button press, updates desired state and re-renders homepage
 def switch_state():
 	global desired_state
-	desired_state = bool(int(request.form['switch']))
+	desired_state = not desired_state
 	print desired_state
-	time.sleep(1.5)
-	return redirect(url_for('homepage'))
+
+	C = threading.Condition()
+	C.acquire()
+
+	running = bool(db.get_last_ac_state()[3])
+	print running
+	#threading.Timer(.5, lambda: desired_state == runnning)
+	while desired_state != running:
+		print running+'_inside'
+		C.wait()
+	
+	C.release()
+	#time.sleep(10)
+	print "redirecting"
+	# while True:
+	# 	if desired_state == running:
+	# 		break
+	# 	time.sleep(0.1)
+	return jsonify(running=running)
 
 @app.route('/mode', methods=['POST'])
 #set to home mode or away mode
@@ -62,4 +86,4 @@ def set_temp():
 	return redirect(url_for('homepage'))
 
 if __name__=="__main__":
-	app.run(debug=True)
+	app.run('0.0.0.0')

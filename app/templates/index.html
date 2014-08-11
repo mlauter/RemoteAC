@@ -5,23 +5,17 @@
   <p>
     {{time.strftime('Currently, it is %I:%M %p on %A, %m-%d-%Y')}}<br>
     The temperature is {{temp}} degrees F<br>
-    Your air conditioner is {{ 'on' if running else 'off' }}
+    Your air conditioner is <span id='on_off_span'>{{ 'on' if running else 'off' }}</span>
   </p>
 </div>
-<form name="input" action="{{ url_for('switch_state') }}" method="post">
-<input type="hidden" name="switch" value="{{ 0 if running else 1 }}">
-<input type="submit" value="{{ 'Turn off' if running else 'Turn on' }}">
-</form>
+<button id="on_off_switch">{{'Turn off' if running else 'Turn on'}}</button><br>
 
-<form name="input" action="{{ url_for('mode') }}" method="post">
-<input type="radio" name="home_mode" value=0>Away
-<input type="radio" name="home_mode" value=1>Home
-<input type="submit" value="Submit">
-</form>
+<input id='radio_away' type="radio" name="home_mode" value=0>Away
+<input id='radio_home' type="radio" name="home_mode" value=1>Home
 
-<form name="input" action="{{ url_for('set_temp') }}" method = "post">
-  Desired Temperature: <input type="text" name="desired_temp"><br>
-<input type="submit" value="Submit">
+<form id="set_temperature" name="input" action="{{ url_for('set_temp') }}" method = "post" style="display: none;">
+  Desired Temperature: <input type="text" name="desired_temp" id="desired_temp"><br>
+<input type="submit" value="submit">
 </form>
 
 {% endblock %}

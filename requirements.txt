@@ -27,8 +27,10 @@ gevent-socketio==0.3.6
 gevent-websocket==0.9.3
 gnureadline==6.3.3
 greenlet==0.4.2
+pylock==0.2
 python-openid==2.2.5
 pytz==2013b
+redis==2.10.2
 speaklater==1.3
 sqlalchemy-migrate==0.7.2
 wsgiref==0.1.2
