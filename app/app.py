@@ -5,7 +5,7 @@ import datetime
 import time
 import db
 
-app = Flask(__name__)
+app = Flask(__name__, static_url_path='')
 global desired_state
 desired_state = False
 global desired_temp
