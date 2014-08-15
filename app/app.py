@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, jsonify
 from flask.ext.socketio import SocketIO, send, emit
+from werkzeug.contrib.fixers import ProxyFix
 import threading
 import datetime
 import time
@@ -74,5 +75,6 @@ def set_temp():
 	print desired_temp
 	return redirect(url_for('homepage'))
 
+app.wsgi_app = ProxyFix(app.wsgi_app)
 if __name__=="__main__":
-	app.run('0.0.0.0',threaded=True)
+	app.run(threaded=True)
