@@ -3,8 +3,7 @@ RemoteAC
 turning a dumb window air conditioner into a remote-controllable, programmable AC
 
 Hardware
-========
-========
+--------
 
 ## Dependencies
 * Flask
