@@ -9,6 +9,7 @@ turning a dumb window air conditioner into a remote-controllable, programmable A
 * sqlite3
 * requests
 * RPi.GPIO
+* gunicorn
 
 Hardware
 --------
