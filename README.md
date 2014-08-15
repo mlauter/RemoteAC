@@ -1,4 +1,9 @@
-RemoteAC - a web app for turning my dumb window air conditioner into a remote-controllable, programmable AC
+RemoteAC 
+========
+turning a dumb window air conditioner into a remote-controllable, programmable AC
+
+Hardware
+========
 ========
 
 ## Dependencies
