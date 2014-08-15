@@ -2,20 +2,30 @@ RemoteAC
 ========
 turning a dumb window air conditioner into a remote-controllable, programmable AC
 
-Hardware
---------
-
 ## Dependencies
 * Flask
 * time
 * datetime
 * sqlite3
+* requests
+* RPi.GPIO
+* gunicorn
 
-## Introduction
+Hardware
+--------
+RemoteAC is created using a raspberry pi with this [souped up relay](http://www.adafruit.com/products/268) and a temperature sensor like [this](http://www.adafruit.com/products/381). 
 
-The internet of things comes to my apartment! I've set up the AC to be connected to my raspberry pi via this [souped up relay](http://www.adafruit.com/products/268). I also have a temperature sensor like [this](http://www.adafruit.com/products/381) connected. The pi runs a scriptand posts to the server every second. *See my [gist](https://gist.github.com/mlauter/ab1ab393eabaaf0c6c2b) for the code running on the pi!*
+Packages used on the pi
+-------
+On the pi, I'm using the requests library to post to the server, RPi.GPIO to interface with the pins, and using [Adafruit's tutorial](https://learn.adafruit.com/adafruits-raspberry-pi-lesson-11-ds18b20-temperature-sensing/software) for the temperature sensing.
 
-The flask server responds to the post request with data set by the user in the browser. This server also displays the UI, using some javascript with jQuery for the buttons and input fields. I'm currently playing around with some css to make it look better. 
+Server
+-------
+The server uses Flask, python, and will soon be hosted on Heroku. I'm also using an sqlite3 database to store information about the temperature in my room over time. Soon, this will be displayed in the browser.
+
+UI
+------
+I've used some javascript with jQuery for the buttons and input fields. I'm currently playing around with css Bootstrap to make it look better. 
 
 If you're interested in turning your dumb window AC into a smart, awesome AC feel free to email me at lauter.miriam@gmail.com. 
 
