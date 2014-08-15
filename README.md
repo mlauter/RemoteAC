@@ -2,6 +2,10 @@ RemoteAC - a web app for turning my dumb window air conditioner into a remote-co
 ========
 
 ## Dependencies
+* Flask
+* time
+* datetime
+* sqlite3
 
 ## Introduction
 
