@@ -7,11 +7,11 @@ import time
 import db
 
 app = Flask(__name__, static_url_path='')
-global desired_state
+#global desired_state
 desired_state = False
-global desired_temp
+#global desired_temp
 desired_temp = 100
-global home_mode
+#global home_mode
 home_mode = False
 
 from collections import namedtuple
@@ -35,19 +35,19 @@ def homepage():
 @app.route('/ac_status', methods=['POST'])
 #the route for the rpi to ping with latest state info (temp and on/off)
 #returns desired state
-def temp_update():
+def temp_update(desired_state,desired_temp,home_mode):
 	temp = float(request.form['temperature'])
 	is_running = bool(int(request.form['is_running']))
 	db.add_ac_state(AcState(datetime.datetime.now(),temp,is_running))
-	global desired_state
-	global desired_temp
-	global home_mode
+	# global desired_state
+	# global desired_temp
+	# global home_mode
 	return jsonify(desired_state=desired_state, desired_temp=desired_temp, home_mode=home_mode)
 
 @app.route('/switch_state', methods=['GET'])
 #the route for the UI button press, updates desired state and re-renders homepage
-def switch_state():
-	global desired_state
+def switch_state(desired_state):
+	# global desired_state
 	desired_state = not desired_state
 	print desired_state
 
@@ -61,16 +61,16 @@ def switch_state():
 
 @app.route('/mode', methods=['POST'])
 #set to home mode or away mode
-def mode():
-	global home_mode
+def mode(home_mode):
+	# global home_mode
 	home_mode=bool(int(request.form['home_mode']))
 	#print "home mode ="+str(home_mode)
 	return redirect(url_for('homepage'))
 
 @app.route('/set_temp', methods=['POST'])
 #set the desired temperature for the air conditioner to achieve in the room
-def set_temp():
-	global desired_temp
+def set_temp(desired_temp):
+	# global desired_temp
 	desired_temp = int(request.form['desired_temp'])
 	print desired_temp
 	return redirect(url_for('homepage'))
