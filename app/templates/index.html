@@ -1,21 +1,32 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="jumbotron"><h1>Hi, Miriam</h1></div>
+<div class="jumbotron"><h1>AC Remote <small>Control your AC from anywhere</small></h1></div>
 <div>
-  <p>
-    {{time.strftime('Currently, it is %I:%M:%S %p on %A, %m-%d-%Y')}}<br>
-    The temperature is {{temp}} degrees F<br>
-    Your air conditioner is <span id='on_off_span'>{{ 'on' if running else 'off' }}</span>
+  <p class="lead">
+    <div id="clock">{{time.strftime('Currently, it is %I:%M:%S %p on %A, %m-%d-%Y')}}</div><br>
+    The temperature is <mark><span id = "room_temp_span">{{room_temp}}</span></mark> degrees F<br>
+    Your air conditioner is <mark><span id='on_off_span'>{{ 'on' if is_running else 'off' }}</span></mark>
   </p>
 </div>
-<button id="on_off_switch">{{'Turn off' if running else 'Turn on'}}</button><br>
+  <label class="radio-inline">
+    <input id='radio_on' type="radio" name="power_state" value=1> Turn on
+  </label>
+  <label class="radio-inline">
+    <input id='radio_off' type="radio" name="power_state" value=0> Turn off
+  </label>
+  <br>
+  <label class="radio-inline">
+    <input id='radio_away' type="radio" name="mode" value=0> Away
+  </label>
+  <label class="radio-inline">
+    <input id='radio_home' type="radio" name="mode" value=1> Home
+  </label>
+  <br>
 
-<input id='radio_away' type="radio" name="home_mode" value=0>Away
-<input id='radio_home' type="radio" name="home_mode" value=1>Home
+  <div id="desiredtemp">
+    <span id="temptext">Desired Temperature:</span><input id='temperature' type="text" name="desired_temp">
+  </div>
 
-<form id="set_temperature" name="input" action="{{ url_for('set_temp') }}" method = "post" style="display: none;">
-  Desired Temperature: <input type="text" name="desired_temp" id="desired_temp"><br>
-<input type="submit" value="submit">
-</form>
+<button type="button" class="btn btn-primary" id="submit">Submit</button>
 
 {% endblock %}

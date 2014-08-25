@@ -5,76 +5,80 @@ import threading
 import datetime
 import time
 import db
+from collections import namedtuple
 
 app = Flask(__name__, static_url_path='')
-#global desired_state
-desired_state = False
-#global desired_temp
-desired_temp = 100
-#global home_mode
-home_mode = False
+#initialize desired_state to a dictionary representing the off state
+desired_state={'state_num':1,'goal_temp':''}
 
-from collections import namedtuple
-AcState = namedtuple('AcState', ['timestamp','temp','is_running'])
+AcState = namedtuple('AcState', ['timestamp','room_temp','is_running', 'state_num','goal_temp'])
 
-# def waituntil(condition,timeout,period=0.25)
-# 	while True:
-# 		if condition(): return True
-# 		time.sleep(period)
-# 	return False 
 
 @app.route('/', methods = ['GET','POST'])
 @app.route('/index', methods = ['GET','POST'])
 #the homepage route, reads latest entry from database and renders index.html
 def homepage():
-	last_ac_state = db.get_last_ac_state()
-	temp = last_ac_state[2]
-	running = bool(last_ac_state[3])
-	return render_template('index.html', temp = temp, running = running, time=datetime.datetime.now())
+    current_log = db.get_last_ac_state()
+    room_temp = current_log[2]
+    is_running = bool(current_log[3])
+    return render_template('index.html', room_temp = room_temp, is_running = is_running, time=datetime.datetime.now())
 
 @app.route('/ac_status', methods=['POST'])
 #the route for the rpi to ping with latest state info (temp and on/off)
 #returns desired state
-def temp_update(desired_state,desired_temp,home_mode):
-	temp = float(request.form['temperature'])
-	is_running = bool(int(request.form['is_running']))
-	db.add_ac_state(AcState(datetime.datetime.now(),temp,is_running))
-	# global desired_state
-	# global desired_temp
-	# global home_mode
-	return jsonify(desired_state=desired_state, desired_temp=desired_temp, home_mode=home_mode)
+def update():
+    # have the ac respond with the state (which is given by the state_num 1, 2, or 3 and a goal temp, an empty string or an integer), whether it is running, and what the room temp is
+    response = request.json()
+    
+    room_temp = response['room_temp']
+    is_running = response['is_running']
+    state_num = response['state_num'] #1, 2, or 3
+    goal_temp = str(response['goal_temp']) #an empty string or an integer
+    #store temp as a string in the database because sometimes it's an empty string
+    db.add_ac_state(AcState(datetime.datetime.now(),room_temp,is_running,state_num,goal_temp))
 
-@app.route('/switch_state', methods=['GET'])
-#the route for the UI button press, updates desired state and re-renders homepage
-def switch_state(desired_state):
-	# global desired_state
-	desired_state = not desired_state
-	print desired_state
+    #return 
+    global desired_state
+    return jsonify(desired_state)
 
-	running = bool(db.get_last_ac_state()[3])
-	print running
-	while desired_state != running:
-		time.sleep(1)
-		running = bool(db.get_last_ac_state()[3])
-	print "redirecting"
-	return jsonify(running=running)
+@app.route('/switch_state', methods=['GET','POST'])
+# the route the user POSTs to with desired state info
+def switch_state():
+    current_log = db.get_last_ac_state()
+    current_state = (current_log[4], current_log[5])
 
-@app.route('/mode', methods=['POST'])
-#set to home mode or away mode
-def mode(home_mode):
-	# global home_mode
-	home_mode=bool(int(request.form['home_mode']))
-	#print "home mode ="+str(home_mode)
-	return redirect(url_for('homepage'))
 
-@app.route('/set_temp', methods=['POST'])
-#set the desired temperature for the air conditioner to achieve in the room
-def set_temp(desired_temp):
-	# global desired_temp
-	desired_temp = int(request.form['desired_temp'])
-	print desired_temp
-	return redirect(url_for('homepage'))
+    #if we have a post request, do this stuff, otherwise just populate the page with the latest database state
+    if request.method == 'POST':
+        global desired_state
+        desired_state = statify(request.json())
+        desired_state_tup = (desired_state['state_num'],desired_state['goal_temp'])
+        #get latest state AC has reported from db
+
+        while desired_state_tup != current_state:
+            time.sleep(1)
+            current_log = db.get_last_ac_state()
+            current_state = (current_log[4], current_log[5])
+
+    #need to return stuff that the browser will then use
+    return jsonify(is_running = current_log[3], state_num=current_state[0],goal_temp=current_state[1])
+
+def statify(ui_state):
+    #takes in inputs from the browser and returns an allowable state to give the AC. These states are in the form of dictionaries. state_num is an option 1, 2 or 3 corresponding to OFF, ON, and MANAGE_TEMpP and goal_temp is an empty string for ON (2) and OFF(1), but is the user's desired temperature input for MANAGE_TEMP (3). Returns a dictionary 
+    allowed_states = {'OFF':{'state_num':1,goal_temp:''},
+                      'ON':{'state_num':2,'goal_temp':''},
+                      'MANAGE_TEMP':{'state_num':3,
+                                     'goal_temp':str(ui_state['desired_temp'])}}
+    cleaned_state = {}
+    if ui_state['desired_power_state'] == False:
+        cleaned_state=allowed_states['OFF']
+    elif ui_state['desired_mode_is_home']:
+        cleaned_state=allowed_states['MANAGE_TEMP']
+    else:
+        cleaned_state=allowed_states['ON']
+    return cleaned_state
+
 
 app.wsgi_app = ProxyFix(app.wsgi_app)
 if __name__=="__main__":
-	app.run(threaded=True)
+    app.run(debug=True,threaded=True)

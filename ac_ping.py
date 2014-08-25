@@ -70,6 +70,8 @@ def send_current_state():
 	desired_state = r.json()['desired_state']
 	desired_temp = r.json()['desired_temp']
 	home_mode = r.json()['home_mode']
+
+	### need to make this accomodate temp and home mode
 	if desired_state != is_running():
 		set_state(desired_state)
 
