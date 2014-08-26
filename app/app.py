@@ -1,7 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, jsonify
-from flask.ext.socketio import SocketIO, send, emit
 from werkzeug.contrib.fixers import ProxyFix
-import threading
 import datetime
 import time
 import db

@@ -3,13 +3,13 @@ RemoteAC
 turning a dumb window air conditioner into a remote-controllable, programmable AC
 
 ## Dependencies
-* Flask
-* time
-* datetime
-* sqlite3
+Server side:
+* python 2.7
+* Flask==0.10
+
+Raspberry Pi side:
 * requests
 * RPi.GPIO
-* gunicorn
 
 Hardware
 --------
@@ -21,12 +21,11 @@ On the pi, I'm using the requests library to post to the server, RPi.GPIO to int
 
 Server
 -------
-The server uses Flask, python, and will soon be hosted on Heroku. I'm also using an sqlite3 database to store information about the temperature in my room over time. Soon, this will be displayed in the browser.
+The server uses Flask in python 2.7, and will soon be hosted on Heroku. I'm also using an sqlite3 database to store information about the temperature in my room over time. 
 
 UI
 ------
-I've used some javascript with jQuery for the buttons and input fields. I'm currently playing around with css Bootstrap to make it look better. 
+HTML, jQuery and some CSS (bootstrap) 
 
 If you're interested in turning your dumb window AC into a smart, awesome AC feel free to email me at lauter.miriam@gmail.com. 
 
-Note, this project is still under development.
