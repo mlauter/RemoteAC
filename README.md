@@ -10,6 +10,7 @@ Server side:
 Raspberry Pi side:
 * requests
 * RPi.GPIO
+Note: I haven't included these in the requirements.txt file, since you don't need them for the server. If you want to use my rpi code, download the ac_ping.py file and install requests and RPi.GPIO on your raspberry pi.
 
 Hardware
 --------
