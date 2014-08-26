@@ -1,12 +1,14 @@
 $(document).ready(function() {
     // populate the inputs with current state of the AC
     $.get('/switch_state',function(data) {
-        var stateNum = data.stateNum;
+        var stateNum = data.state_num;
         console.log(stateNum)
-        var goalTemp = data.goalTemp;
+        var goalTemp = data.goal_temp;
         if (stateNum == 1) {
             $('#radio_on').prop('checked', false);
+            $('#radio_off').prop('checked',true)
         } else {
+            $('#radio_off').prop('checked',false)
             $('#radio_on').prop('checked', true);            
         }
         if (stateNum == 3) {
@@ -44,7 +46,11 @@ $(document).ready(function() {
         console.log(powerState);
         var mode = $('#radio_home').prop('checked');
         console.log(mode);
-        var temp = $('#temperature').val();
+        if (mode === true) {
+            var temp = $('#temperature').val();
+        } else {
+            var temp = ''
+        }
         console.log(temp);
         var dataToSend = {
             'desired_power_state':powerState,
@@ -65,10 +71,10 @@ $(document).ready(function() {
           success: function(data){
                 console.log('got response')
             // wait for the ac response, then repopulate the page with new info
-                var isRunning = data.isRunning;
-                var roomTemp = data.roomTemp;
-                var stateNum = data.stateNum;
-                var goalTemp = data.goalTemp;
+                var isRunning = data.is_running;
+                var roomTemp = data.room_temp;
+                var stateNum = data.state_num;
+                var goalTemp = data.goal_temp;
                 $('#room_temp_span').html(roomTemp)
                 if (isRunning == 1) {
                     $('#on_off_span').html('on')

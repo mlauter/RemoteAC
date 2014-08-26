@@ -28,13 +28,15 @@ def homepage():
 #returns desired state
 def update():
     # have the ac respond with the state (which is given by the state_num 1, 2, or 3 and a goal temp, an empty string or an integer), whether it is running, and what the room temp is
-    response = request.json()
+    response = request.json
     
     room_temp = response['room_temp']
     is_running = response['is_running']
     state_num = response['state_num'] #1, 2, or 3
     goal_temp = str(response['goal_temp']) #an empty string or an integer
     #store temp as a string in the database because sometimes it's an empty string
+    print room_temp
+    print "I heard from the AC"
     db.add_ac_state(AcState(datetime.datetime.now(),room_temp,is_running,state_num,goal_temp))
 
     #return 
@@ -82,4 +84,4 @@ def statify(ui_state):
 
 app.wsgi_app = ProxyFix(app.wsgi_app)
 if __name__=="__main__":
-    app.run(debug=True,threaded=True)
+    app.run('0.0.0.0',threaded=True)
