@@ -50,8 +50,9 @@ def switch_state():
 
     #if we have a post request, do this stuff, otherwise just populate the page with the latest database state
     if request.method == 'POST':
+        print request.json
         global desired_state
-        desired_state = statify(request.json())
+        desired_state = statify(request.json)
         desired_state_tup = (desired_state['state_num'],desired_state['goal_temp'])
         #get latest state AC has reported from db
 
@@ -65,7 +66,7 @@ def switch_state():
 
 def statify(ui_state):
     #takes in inputs from the browser and returns an allowable state to give the AC. These states are in the form of dictionaries. state_num is an option 1, 2 or 3 corresponding to OFF, ON, and MANAGE_TEMpP and goal_temp is an empty string for ON (2) and OFF(1), but is the user's desired temperature input for MANAGE_TEMP (3). Returns a dictionary 
-    allowed_states = {'OFF':{'state_num':1,goal_temp:''},
+    allowed_states = {'OFF':{'state_num':1,'goal_temp':''},
                       'ON':{'state_num':2,'goal_temp':''},
                       'MANAGE_TEMP':{'state_num':3,
                                      'goal_temp':str(ui_state['desired_temp'])}}
