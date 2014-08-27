@@ -55,9 +55,13 @@ def switch_state():
         desired_state = statify(request.json)
         desired_state_tup = (desired_state['state_num'],desired_state['goal_temp'])
         #get latest state AC has reported from db
-
+        wait_time = 0 
         while desired_state_tup != current_state:
             time.sleep(1)
+            wait_time += 1
+            if wait_time > 10:
+                print "the air conditioner did not respond"
+                break
             current_log = db.get_last_ac_state()
             current_state = (current_log[4], current_log[5])
 

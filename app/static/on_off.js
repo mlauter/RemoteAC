@@ -1,4 +1,11 @@
 $(document).ready(function() {
+    // define ajaxStart and Stop functions
+    $(document).ajaxStart(function() {
+        $('body').css({'cursor':'progress'});
+
+    }).ajaxStop(function() {
+        $('body').css({'cursor':'default'});
+    });
     // populate the inputs with current state of the AC
     $.get('/switch_state',function(data) {
         var stateNum = data.state_num;
@@ -57,17 +64,21 @@ $(document).ready(function() {
             'desired_mode_is_home':mode,
             'desired_temp':temp
         };
-
+        
+        
+        
         // reload the clock
         $('#clock').load('index' + ' #clock');
         // post to switch_state route
 
+        $(this).hide();
         $.ajax({
           url:'/switch_state',
           type:"POST",
           data:JSON.stringify(dataToSend),
           contentType:"application/json; charset=utf-8",
-          async: false,
+          timeout: 10000, 
+          // give the ac 10 seconds
           success: function(data){
                 console.log('got response')
             // wait for the ac response, then repopulate the page with new info
@@ -91,7 +102,12 @@ $(document).ready(function() {
                     $('#temptext').css('color','grey')
                     $('#temperature').prop('disabled',true);
                 }
-            }
+            },
+          error: function() {
+            alert("The air conditioner did not get your request!")
+          }
         });
+        $('.btn').show();
+        
     }); 
 });
