@@ -6,6 +6,7 @@ turning a dumb window air conditioner into a remote-controllable, programmable A
 Server side:
 * python 2.7
 * Flask==0.10
+* gunicorn==19.1.1
 
 Raspberry Pi side:
 * requests
