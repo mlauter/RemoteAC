@@ -53,11 +53,17 @@ $(document).ready(function() {
         console.log(powerState);
         var mode = $('#radio_home').prop('checked');
         console.log(mode);
+        // check that temp is a number and is in a reasonable temperature range or set to empty string if we don't need it
         if (mode === true) {
-            var temp = $('#temperature').val();
+            if (temp.isNumeric() || temp === '') {
+                var temp = $('#temperature').val();
+            } else {
+                alert()
+            }
         } else {
             var temp = ''
         }
+
         console.log(temp);
         var dataToSend = {
             'desired_power_state':powerState,
