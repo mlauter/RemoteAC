@@ -89,15 +89,19 @@ def switch_state():
         desired_state = statify(request.json)
         desired_state_tup = (desired_state['state_num'],desired_state['goal_temp'])
         #get latest state AC has reported from db
-        wait_time = 0 
-        while desired_state_tup != current_state:
-            time.sleep(1)
-            wait_time += 1
-            if wait_time > 10:
-                print "the air conditioner did not respond"
-                break
-            current_log = db.get_last_ac_state()
-            current_state = (current_log[4], current_log[5])
+        #wait_time = 0
+        # on heroku, only one worker, this will block
+
+        # while desired_state_tup != current_state:
+            # time.sleep(1)
+        #    wait_time += 1
+            # if wait_time > 20:
+            #     print "the air conditioner did not respond"
+            #     break
+        #wait 4 seconds
+        #time.sleep(4)
+        current_log = db.get_last_ac_state()
+        current_state = (current_log[4], current_log[5])
 
     #need to return stuff that the browser will then use
     return jsonify(is_running = current_log[3], state_num=current_state[0],goal_temp=current_state[1])
@@ -120,4 +124,4 @@ def statify(ui_state):
 
 app.wsgi_app = ProxyFix(app.wsgi_app)
 if __name__=="__main__":
-    app.run(debug=True,threaded=True)
+    app.run(threaded=True)

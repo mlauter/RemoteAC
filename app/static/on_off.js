@@ -55,11 +55,7 @@ $(document).ready(function() {
         console.log(mode);
         // check that temp is a number and is in a reasonable temperature range or set to empty string if we don't need it
         if (mode === true) {
-            if (temp.isNumeric() || temp === '') {
-                var temp = $('#temperature').val();
-            } else {
-                alert()
-            }
+            var temp = $('#temperature').val();
         } else {
             var temp = ''
         }
@@ -77,14 +73,13 @@ $(document).ready(function() {
         $('#clock').load('index' + ' #clock');
         // post to switch_state route
 
-        $(this).hide();
         $.ajax({
           url:'/switch_state',
           type:"POST",
           data:JSON.stringify(dataToSend),
           contentType:"application/json; charset=utf-8",
-          timeout: 10000, 
-          // give the ac 10 seconds
+          timeout: 20000, 
+          // give the ac 20 seconds
           success: function(data){
                 console.log('got response')
             // wait for the ac response, then repopulate the page with new info
@@ -113,7 +108,6 @@ $(document).ready(function() {
             alert("The air conditioner did not get your request!")
           }
         });
-        $('.btn').show();
         
     }); 
 });
