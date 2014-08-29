@@ -19,6 +19,10 @@
   <body>
       <div class="container">
         <div>AC Remote: <a href="/index">Home</a></div>
+        <div><p><a href="/logout">logout</a></p></div>
+        <!-- {% for message in get_flashed_messages() %} -->
+        <!-- {{ message }} -->
+        <!-- {% endfor %} -->
         {% block content %}{% endblock %}
         <script src="on_off.js"></script>
         </div>
