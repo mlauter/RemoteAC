@@ -31,12 +31,12 @@ def set_state(state_num, goal_temp):
     else:
         print "home_mode"
         #this is the thermostat mode where we try to achieve a goal tem
-        goal_temp_range_min = int(goal_temp) - 1 # don't get colder than a degree below what user asked for
-        goal_temp_range_max = int(goal_temp) + 3 # don't get warmer than 3 degrees above what user asked for
+        #goal_temp_range_min = int(goal_temp) - 1 # don't get colder than a degree below what user asked for
+        goal_temp_range_max = int(goal_temp) + 2 # don't get warmer than 2 degrees above what user asked for
         if room_temp >= goal_temp_range_max:
             # if we're at the max of temp range or hotter, turn on
             io.output(switch_pin, True)
-        elif room_temp < goal_temp_range_min:
+        elif room_temp < goal_temp:
             # if we're under the temp range turn off
             io.output(switch_pin, False)
         #otherwise just keep doing what you're doing
@@ -76,7 +76,7 @@ def send_current_state():
         "goal_temp": state['goal_temp']
     }
     # r = requests.post('http://safe-inlet-3633.herokuapp.com/ac_status', data=data_to_be_sent, timeout=5)
-    url = "http://10.0.5.236:5000/ac_status"
+    url = "http://safe-inlet-3633.herokuapp.com/ac_status"
     headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
     r = requests.post(url, data=json.dumps(data_to_be_sent), headers=headers, timeout=5)
 
