@@ -7,8 +7,9 @@ import db
 from collections import namedtuple
 
 app = Flask(__name__, static_url_path='')
-#initialize desired_state to a dictionary representing the off state
-app.secret_key = ' \xd8\xf3yb\x80\xfc~y\xa7/\xed\x16VG,f\xf1\xc4\xb4\x14\xdfu\x08'
+
+#Generate something secret! (import os, os.urandom(24))
+app.secret_key = 'super secret key' # replace this
 
 # login required decorator
 def login_required(f):
@@ -20,7 +21,8 @@ def login_required(f):
             flash('You need to login first.')
             return redirect(url_for('login'))
     return wrap
-
+    
+#initialize desired_state to a dictionary representing the off state
 desired_state={'state_num':1,'goal_temp':''}
 
 AcState = namedtuple('AcState', ['timestamp','room_temp','is_running', 'state_num','goal_temp'])
@@ -29,7 +31,8 @@ AcState = namedtuple('AcState', ['timestamp','room_temp','is_running', 'state_nu
 def login():
     error = None
     if request.method == 'POST':
-        if request.form['username'] != 'miriamlauter' or request.form['password'] != 'mysupersecretpassword':
+        # create your own username and password
+        if request.form['username'] != 'YOUR USERNAME HERE' or request.form['password'] != 'YOUR PASSWORD HERE':
             error = 'Invalid Credentials. Please try again.'
         else:
             session['logged_in'] = True
@@ -88,18 +91,6 @@ def switch_state():
         global desired_state
         desired_state = statify(request.json)
         desired_state_tup = (desired_state['state_num'],desired_state['goal_temp'])
-        #get latest state AC has reported from db
-        #wait_time = 0
-        # on heroku, only one worker, this will block
-
-        # while desired_state_tup != current_state:
-            # time.sleep(1)
-        #    wait_time += 1
-            # if wait_time > 20:
-            #     print "the air conditioner did not respond"
-            #     break
-        #wait 4 seconds
-        #time.sleep(4)
         current_log = db.get_last_ac_state()
         current_state = (current_log[4], current_log[5])
 
@@ -124,4 +115,5 @@ def statify(ui_state):
 
 app.wsgi_app = ProxyFix(app.wsgi_app)
 if __name__=="__main__":
-    app.run(threaded=True)
+    app.run() #to run with the debuger app.run(debug=True)
+    #to test with raspberry pi communication on localhost app.run('0.0.0.0')
