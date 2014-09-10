@@ -40,7 +40,6 @@ def set_state(state_num, goal_temp):
         #otherwise just keep doing what you're doing
 
     #set the global state
-    global state
     state['state_num'] = state_num
     state['goal_temp'] = goal_temp
 
