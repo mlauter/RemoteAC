@@ -74,6 +74,7 @@ def send_current_state():
         "goal_temp": state['goal_temp']
     }
     url = "your.url.here/your_route"
+    #for testing server running on your computer's local host, url = 'your.ip.address/your_route'
     headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
     r = requests.post(url, data=json.dumps(data_to_be_sent), headers=headers, timeout=5)
 
