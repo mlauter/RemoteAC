@@ -29,7 +29,6 @@ def set_state(state_num, goal_temp):
         #this is the thermostat mode where we try to achieve a goal temp
         #this does not perform very well at the edges of the temp range (turns off and on a lot)
         #could definitely be improved
-        #goal_temp_range_min = int(goal_temp) - 1 # don't get colder than a degree below what user asked for
         goal_temp_range_max = int(goal_temp) + 2 # don't get warmer than 2 degrees above what user asked for
         if room_temp >= goal_temp_range_max:
             # if we're at the max of temp range or hotter, turn on
