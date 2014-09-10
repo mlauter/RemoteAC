@@ -10,10 +10,6 @@ import glob
 import json
 
 
-
-
-
-
 def is_running():
         #retrieves state of switch_pin
     return io.input(switch_pin)
@@ -30,7 +26,9 @@ def set_state(state_num, goal_temp):
         goal_temp = ''
     else:
         print "home_mode"
-        #this is the thermostat mode where we try to achieve a goal tem
+        #this is the thermostat mode where we try to achieve a goal temp
+        #this does not perform very well at the edges of the temp range (turns off and on a lot)
+        #could definitely be improved
         #goal_temp_range_min = int(goal_temp) - 1 # don't get colder than a degree below what user asked for
         goal_temp_range_max = int(goal_temp) + 2 # don't get warmer than 2 degrees above what user asked for
         if room_temp >= goal_temp_range_max:
@@ -75,8 +73,7 @@ def send_current_state():
         "state_num": state['state_num'], #get the current global state
         "goal_temp": state['goal_temp']
     }
-    # r = requests.post('http://safe-inlet-3633.herokuapp.com/ac_status', data=data_to_be_sent, timeout=5)
-    url = "http://safe-inlet-3633.herokuapp.com/ac_status"
+    url = "your.url.here/your_route"
     headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
     r = requests.post(url, data=json.dumps(data_to_be_sent), headers=headers, timeout=5)
 
@@ -112,15 +109,13 @@ if __name__ == "__main__":
     last_connect = None
     try:
         while True:
-            #print 'hello'
             time.sleep(1)
             try:
-                print 'hello'
                 pre_connect = datetime.now()
                 send_current_state()
                 last_connect = datetime.now()
-            except IOError:
-                print "error!"
+            except IOError as e:
+                print e
                 t_delt = timedelta(minutes=5)
                 if last_connect:
                     if datetime.now()>(last_connect+t_delt):
@@ -131,6 +126,5 @@ if __name__ == "__main__":
     except Exception as e:
         print e
     finally:
-        #print 'crap'
         cleanup()
 
