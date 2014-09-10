@@ -30,11 +30,11 @@ def set_state(state_num, goal_temp):
         #this does not perform very well at the edges of the temp range (turns off and on a lot)
         #could definitely be improved
         goal_temp_range_max = int(goal_temp) + 2 # don't get warmer than 2 degrees above what user asked for
-        if room_temp >= goal_temp_range_max:
-            # if we're at the max of temp range or hotter, turn on
+        if room_temp > goal_temp_range_max:
+            # if we're hotter than max, turn on
             io.output(switch_pin, True)
-        elif room_temp < goal_temp:
-            # if we're under the temp range turn off
+        elif room_temp <= goal_temp:
+            # if we're at orunder the temp range turn off
             io.output(switch_pin, False)
         #otherwise just keep doing what you're doing
 
