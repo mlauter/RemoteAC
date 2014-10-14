@@ -80,26 +80,27 @@ def update():
 
 @app.route('/switch_state', methods=['GET','POST'])
 @login_required
-# the route the user POSTs to with desired state info
+# the route the user (browser) POSTs to with desired state
 def switch_state():
+    """Set new desired state based on user input and return the current state of the air conditioner (newest database entry) to the browser"""
+
+    # set new desired state
+    if request.method == 'POST':
+        global desired_state
+        desired_state = statify(request.json)
+        desired_state_tup = (desired_state['state_num'],
+                             desired_state['goal_temp'])
+
+    # get current AC state
     current_log = db.get_last_ac_state()
     current_state = (current_log[4], current_log[5])
 
-
-    #if we have a post request, do this stuff, otherwise just populate the page with the latest database state
-    if request.method == 'POST':
-        print request.json
-        global desired_state
-        desired_state = statify(request.json)
-        desired_state_tup = (desired_state['state_num'],desired_state['goal_temp'])
-        current_log = db.get_last_ac_state()
-        current_state = (current_log[4], current_log[5])
-
-    #need to return stuff that the browser will then use
+    # return current state to browser
     return jsonify(is_running = current_log[3], state_num=current_state[0],goal_temp=current_state[1])
 
 def statify(ui_state):
-    #takes in inputs from the browser and returns an allowable state to give the AC. These states are in the form of dictionaries. state_num is an option 1, 2 or 3 corresponding to OFF, ON, and MANAGE_TEMpP and goal_temp is an empty string for ON (2) and OFF(1), but is the user's desired temperature input for MANAGE_TEMP (3). Returns a dictionary 
+    """Takes in inputs from the browser and returns an allowable state to give the AC. These states are in the form of dictionaries. state_num is an option 1, 2 or 3 corresponding to OFF, ON, and MANAGE_TEMP and goal_temp is an empty string for ON (2) and OFF(1), but is the user's desired temperature input for MANAGE_TEMP (3). Returns a dictionary."""
+    
     allowed_states = {'OFF':{'state_num':1,'goal_temp':''},
                       'ON':{'state_num':2,'goal_temp':''},
                       'MANAGE_TEMP':{'state_num':3,
