@@ -12,6 +12,11 @@ app = Flask(__name__, static_url_path='')
 #Generate something secret! (import os, os.urandom(24))
 app.secret_key = os.environ["SECRET_KEY"]
 
+#initialize desired_state to a dictionary representing the off state
+desired_state={'state_num':1,'goal_temp':''}
+
+AcState = namedtuple('AcState', ['timestamp','room_temp','is_running', 'state_num','goal_temp'])
+
 # login required decorator
 def login_required(f):
     @wraps(f)
@@ -23,11 +28,6 @@ def login_required(f):
             return redirect(url_for('login'))
     return wrap
     
-#initialize desired_state to a dictionary representing the off state
-desired_state={'state_num':1,'goal_temp':''}
-
-AcState = namedtuple('AcState', ['timestamp','room_temp','is_running', 'state_num','goal_temp'])
-
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     error = None
@@ -59,19 +59,19 @@ def homepage():
     return render_template('index.html', room_temp = room_temp, is_running = is_running, time=datetime.datetime.now())
 
 @app.route('/ac_status', methods=['POST'])
-#the route for the rpi to ping with latest state info (temp and on/off)
-#returns desired state
+#The route for the rpi to ping with latest state info
 def update():
-    # have the ac respond with the state (which is given by the state_num 1, 2, or 3 and a goal temp, an empty string or an integer), whether it is running, and what the room temp is
+    """Receive information from the Raspberry Pi about the air conditioner's state and add to the database. Respond to the Pi with the current desired state as set by the user."""
+
     response = request.json
-    
     room_temp = response['room_temp']
     is_running = response['is_running']
     state_num = response['state_num'] #1, 2, or 3
     goal_temp = str(response['goal_temp']) #an empty string or an integer
-    #store temp as a string in the database because sometimes it's an empty string
-    print room_temp
-    print "I heard from the AC"
+    
+    # print room_temp #for debugging
+
+    # add information received from the Raspberry Pi to the database
     db.add_ac_state(AcState(datetime.datetime.now(),room_temp,is_running,state_num,goal_temp))
 
     #return 
