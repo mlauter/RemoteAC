@@ -8,6 +8,7 @@ def create_db():
 
 def add_ac_state(ac_state):
 	c = conn.cursor()
+	# change to ? format or named format
 	c.execute('insert into ac_states (time, room_temp, is_running, state_num, goal_temp) values ("%s",%f,%d,%d,"%s")'%ac_state)
 	conn.commit()
 
