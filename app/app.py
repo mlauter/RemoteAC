@@ -5,11 +5,12 @@ import datetime
 import time
 import db
 from collections import namedtuple
+import os
 
 app = Flask(__name__, static_url_path='')
 
 #Generate something secret! (import os, os.urandom(24))
-app.secret_key = 'super secret key' # replace this
+app.secret_key = os.environ["SECRET_KEY"]
 
 # login required decorator
 def login_required(f):
@@ -32,7 +33,7 @@ def login():
     error = None
     if request.method == 'POST':
         # create your own username and password
-        if request.form['username'] != 'YOUR USERNAME HERE' or request.form['password'] != 'YOUR PASSWORD HERE':
+        if request.form['username'] != os.environ["USERNAME"] or request.form['password'] != os.environ["PASSWORD"]:
             error = 'Invalid Credentials. Please try again.'
         else:
             session['logged_in'] = True
