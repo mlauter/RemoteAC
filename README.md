@@ -1,6 +1,6 @@
 RemoteAC 
 ========
-turning a dumb window air conditioner into a remote-controllable, programmable AC
+Turning a dumb window air conditioner into a remote-controllable, programmable AC.
 
 ## Dependencies
 Server side:
